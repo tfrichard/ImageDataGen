@@ -50,7 +50,7 @@
  * GENERATED USING SOFTWARE.
  */
 
-package cgl.imr.samples.kmeans.hydra.a;
+package cgl.imr.samples.kmeans.ivy.a;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
@@ -65,6 +65,7 @@ import cgl.imr.base.Value;
 import cgl.imr.base.impl.JobConf;
 import cgl.imr.base.impl.MapperConf;
 import cgl.imr.config.TwisterConfigurations;
+import cgl.imr.data.file.FileData;
 import cgl.imr.types.StringValue;
 
 /**
@@ -73,12 +74,13 @@ import cgl.imr.types.StringValue;
  * @author Jaliya Ekanayake (jaliyae@gmail.com)
  * 
  */
-public class KmeansDataGenMapTask implements MapTask {
+public class KmeansImageDataGenMapTask implements MapTask {
 
 	public static double MAX_VALUE = 1000;
 	// public static int VECTOR_SIZE = 2;
 
 	private JobConf jobConf;
+	private String fileName;
 
 	@Override
 	public void close() throws TwisterException {
@@ -87,51 +89,46 @@ public class KmeansDataGenMapTask implements MapTask {
 	public void configure(JobConf jobConf, MapperConf mapConf)
 			throws TwisterException {
 		this.jobConf = jobConf;
+		FileData fileData = (FileData) mapConf.getDataPartition();
+		fileName = fileData.getFileName();
 	}
 
 	public void map(MapOutputCollector collector, Key key, Value val)
 			throws TwisterException {
 
-		int numDataPoints = Integer.parseInt(jobConf
-				.getProperty(KmeansDataGen.PROP_NUM_DATA_PER_MAP));
-		
-		// int numCentroids =
-		// Integer.parseInt(jobConf.getProperty(KmeansDataGen.NUM_CENTROIDS));
-		int vectLength = Integer.parseInt(jobConf
-				.getProperty(KmeansDataGen.VECT_LENGTH));
-		StringValue fileName = (StringValue) val;
+		//int numDataPoints = Integer.parseInt(jobConf
+		//		.getProperty(KmeansImageDataGen.PROP_NUM_DATA_PER_MAP));
+		int numPic = Integer.parseInt(jobConf.getProperty(
+				KmeansImageDataGen.NUMPICS));
+		int numRow = Integer.parseInt(jobConf.getProperty(
+				KmeansImageDataGen.NUMROWS));
+		int numCol = Integer.parseInt(jobConf.getProperty(
+				KmeansImageDataGen.NUMCOLS));
+		int numDim = Integer.parseInt(jobConf.getProperty(
+				KmeansImageDataGen.NUMDIMS));
 
 		try {
-			String file = TwisterConfigurations.getInstance().getLocalDataDir()
-					+ "/" + fileName.toString();
 
 			Random rand = new Random(System.nanoTime());
 			// BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
 			DataOutputStream writer = new DataOutputStream(
-					new BufferedOutputStream(new FileOutputStream(file)));
+					new BufferedOutputStream(new FileOutputStream(fileName)));
 
-			// First line is the number of data points.
-			// String numPoints = numDataPoints + "\n";
-			writer.writeInt(numDataPoints);
-
-			// Second line is the size of the vectors.
-			// String vecLen = vectLength + "\n";
-			writer.writeInt(vectLength);
-
-			// String strLine;
-			for (int i = 0; i < numDataPoints; i++) {
-				/*
-				 * strLine = ""; for (int j=0; j<vectLength; j++){ //strLine +=
-				 * rand.nextDouble()*MAX_VALUE + " "; strLine +=
-				 * rand.nextInt(MAX_VALUE) + " "; } strLine += "\n";
-				 * writer.write(strLine);
-				 */
-				for (int j = 0; j < vectLength; j++) {
-					writer.writeDouble(rand.nextDouble()
-							* KmeansDataGenMapTask.MAX_VALUE);
+			for (int i = 0; i < numPic; i++) {
+				for (int j = 0; j < numRow; j++) {
+					for (int k = 0; k < numCol; k++) {
+						
+						String line = i + " " + j + " " + k + "\t" + numDim;
+						for (int dim = 0; dim < numDim; dim ++) {
+							line += " " + rand.nextInt(255);
+						}
+						writer.writeChars(line);
+					}
+					writer.flush();
 				}
 			}
+			
 			writer.flush();
 			writer.close();
 		} catch (Exception e) {
