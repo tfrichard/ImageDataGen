@@ -121,7 +121,7 @@ public class KmeansImageDataGen {
 						writer.write(" ");
 						writer.write(String.valueOf(k));
 						writer.write("\t");
-						writer.wirte(String.valueOf(dims));
+						writer.write(String.valueOf(dims));
 
 						for (int dim = 0; dim < dims; dim ++) {
 							writer.write(" ");

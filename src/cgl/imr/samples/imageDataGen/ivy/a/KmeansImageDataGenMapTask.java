@@ -54,7 +54,9 @@ package cgl.imr.samples.imageDataGen.ivy.a;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.Random;
 
 import cgl.imr.base.Key;
@@ -122,11 +124,19 @@ public class KmeansImageDataGenMapTask implements MapTask {
 				for (int j = 0; j < numRow; j++) {
 					for (int k = 0; k < numCol; k++) {
 						
-						String line = String.valueOf(i) + " " + String.valueOf(j) + " " + String.valueOf(k) + "\t" + String.valueOf(numDim);
+						writer.write(String.valueOf(i));
+						writer.write(" ");
+						writer.write(String.valueOf(j));
+						writer.write(" ");
+						writer.write(String.valueOf(k));
+						writer.write("\t");
+						writer.write(String.valueOf(numDim));
+						
 						for (int dim = 0; dim < numDim; dim ++) {
-							line += " " + String.valueOf(rand.nextInt(255));
+							writer.write(" ");
+							writer.write(String.valueOf(rand.nextInt(255)));
 						}
-						writer.writeChars(line);
+						writer.write("\n");
 					}
 					writer.flush();
 				}
