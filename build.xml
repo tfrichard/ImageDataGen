@@ -51,7 +51,7 @@
   ~ GENERATED USING SOFTWARE.
   -->
 
-<project name="Twister-Kmeans-Hydra-A" default="dist">
+<project name="Twister-Kmeans-ImageDataGen-A" default="dist">
     <property name="lib.dir" value="${basedir}/../../"/>
     <import file="${basedir}/../../tasks.xml"/>
 </project>
